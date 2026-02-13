@@ -20,31 +20,34 @@ st.markdown("""
 <style>
     .main-header {
         text-align: center;
-        color: #1f77b4;
+        color: #1a1a1a;
         margin-bottom: 2rem;
     }
     .input-container {
-        background-color: #f0f2f6;
+        background-color: #f8f9fa;
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
+        border: 1px solid #e9ecef;
     }
     .success-message {
         background-color: #d4edda;
         color: #155724;
         padding: 1rem;
         border-radius: 5px;
-        border: 1px solid #c3e6cb;
+        border: 2px solid #1a1a1a;
+        font-weight: bold;
     }
     .error-message {
         background-color: #f8d7da;
         color: #721c24;
         padding: 1rem;
         border-radius: 5px;
-        border: 1px solid #f5c6cb;
+        border: 2px solid #1a1a1a;
+        font-weight: bold;
     }
     .generate-btn {
-        background-color: #1f77b4;
+        background-color: #1a1a1a;
         color: white;
         font-weight: bold;
         padding: 0.75rem 2rem;
@@ -52,9 +55,70 @@ st.markdown("""
         border-radius: 5px;
         width: 100%;
         margin-top: 1rem;
+        transition: all 0.3s ease;
     }
     .generate-btn:hover {
-        background-color: #155a8a;
+        background-color: #000000;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .stButton > button {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 5px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+    }
+    .stButton > button:hover {
+        background-color: #000000 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+    }
+    .stDownloadButton > button {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 5px !important;
+        transition: all 0.3s ease !important;
+    }
+    .stDownloadButton > button:hover {
+        background-color: #000000 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+    }
+    .stTextInput > div > div > input {
+        background-color: white !important;
+        border: 1px solid #e9ecef !important;
+        border-radius: 5px !important;
+    }
+    .stNumberInput > div > div > input {
+        background-color: white !important;
+        border: 1px solid #e9ecef !important;
+        border-radius: 5px !important;
+    }
+    .stProgress > div > div > div > div {
+        background-color: #1a1a1a !important;
+    }
+    .stSpinner > div {
+        color: #1a1a1a !important;
+    }
+    .warning-message {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 5px;
+        border: 1px solid #ffeaa7;
+        margin: 0.5rem 0;
+    }
+    .info-message {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        padding: 1rem;
+        border-radius: 5px;
+        border: 1px solid #bee5eb;
+        margin: 0.5rem 0;
     }
 </style>
 """, unsafe_allow_html=True)
