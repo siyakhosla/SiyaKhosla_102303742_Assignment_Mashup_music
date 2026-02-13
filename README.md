@@ -2,6 +2,10 @@
 
 A complete web application that creates audio mashups from YouTube videos using Streamlit.
 
+## Live Application
+Access the mashup generator here:
+click here: https://siyakhosla102303742assignmentmashupmusic-yr8dzecfqhxv2cugdw39y.streamlit.app/
+
 ## Features
 
 - **Clean UI**: Modern, professional interface with input validation
@@ -163,3 +167,7 @@ For issues or questions:
 1. Check the troubleshooting section above
 2. Verify all dependencies are correctly installed
 3. Ensure internet connectivity for YouTube access
+
+## Author
+Name: Siya Khosla
+Roll number: 102303742
