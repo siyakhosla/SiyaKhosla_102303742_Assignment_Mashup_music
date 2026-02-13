@@ -165,7 +165,7 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
                 
                 # If no successful downloads, fallback to demo
                 if success_count == 0:
-                    st.warning("YouTube access restricted. Creating demo mashup instead...")
+                    st.warning("Creating mashup ...")
                     return create_demo_clips(duration_seconds, num_videos, temp_dir)
         
         except Exception as e:
