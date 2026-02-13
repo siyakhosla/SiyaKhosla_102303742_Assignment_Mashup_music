@@ -67,7 +67,7 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
     audio_clips = []
     
     try:
-        # Configure yt-dlp options
+        # Configure yt-dlp options with more aggressive bypass
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
@@ -80,84 +80,117 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
             'no_warnings': True,
             'extract_flat': False,
             'no_check_certificate': True,
-            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['android', 'web'],
-                    'player_skip': ['configs', 'webpage'],
+                    'player_client': ['android', 'ios', 'web'],
+                    'player_skip': ['configs', 'webpage', 'js'],
                 }
             },
+            'socket_timeout': 60,
+            'retries': 3,
+            'fragment_retries': 3,
         }
         
-        # Search for videos
-        search_query = f"{singer_name} official audio"
+        # Try multiple search queries
+        search_queries = [
+            f"{singer_name} official audio",
+            f"{singer_name} audio",
+            f"{singer_name} song",
+            f"best {singer_name} songs"
+        ]
         
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Search and get video info
-            search_results = ydl.extract_info(
-                f"ytsearch{num_videos}:{search_query}",
-                download=False,
-                process=True
-            )
-            
-            if not search_results or 'entries' not in search_results:
-                raise Exception("No videos found for the specified singer")
-            
-            videos = search_results['entries']
-            
-            # Download and process each video
-            for i, video in enumerate(videos):
-                if i >= num_videos:
-                    break
+        videos_found = []
+        
+        for search_query in search_queries:
+            if len(videos_found) >= num_videos:
+                break
                 
-                progress = (i + 1) / num_videos
-                progress_bar.progress(progress, f"Processing video {i+1}/{num_videos}")
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    # Search and get video info
+                    search_results = ydl.extract_info(
+                        f"ytsearch{num_videos}:{search_query}",
+                        download=False,
+                        process=True
+                    )
+                    
+                    if search_results and 'entries' in search_results:
+                        for video in search_results['entries']:
+                            if video and len(videos_found) < num_videos:
+                                # Skip if already in list
+                                if video.get('id') not in [v.get('id') for v in videos_found]:
+                                    videos_found.append(video)
+                                    
+            except Exception as e:
+                continue  # Try next search query
+        
+        if not videos_found:
+            raise Exception(f"No videos found for '{singer_name}'. Try a different artist name.")
+        
+        # Download and process each video
+        successful_downloads = 0
+        for i, video in enumerate(videos_found):
+            if successful_downloads >= num_videos:
+                break
                 
-                try:
-                    # Get video URL - try different possible keys
-                    video_url = None
-                    if 'url' in video:
-                        video_url = video['url']
-                    elif 'webpage_url' in video:
-                        video_url = video['webpage_url']
-                    elif 'id' in video:
-                        video_url = f"https://www.youtube.com/watch?v={video['id']}"
-                    
-                    if not video_url:
-                        st.warning(f"No valid URL found for video {i+1}")
-                        continue
-                    
-                    # Download the video
-                    video_info = ydl.extract_info(video_url, download=True)
-                    
-                    # Find the downloaded audio file
-                    audio_file = None
-                    for file in os.listdir(temp_dir):
-                        if file.endswith('.mp3'):
-                            audio_file = os.path.join(temp_dir, file)
-                            break
-                    
-                    if audio_file:
-                        # Load audio and extract first duration seconds
-                        audio = AudioSegment.from_mp3(audio_file)
-                        
-                        # Extract the specified duration
-                        if len(audio) > duration_seconds * 1000:
-                            clip = audio[:duration_seconds * 1000]
-                        else:
-                            clip = audio
-                        
-                        audio_clips.append(clip)
-                        
-                        # Remove the temporary file
-                        os.remove(audio_file)
-                    
-                except Exception as e:
-                    st.warning(f"Could not process video {i+1}: {str(e)}")
+            progress = (i + 1) / num_videos
+            progress_bar.progress(progress, f"Processing video {i+1}/{num_videos}")
+            
+            try:
+                # Get video URL - try different possible keys
+                video_url = None
+                if 'url' in video:
+                    video_url = video['url']
+                elif 'webpage_url' in video:
+                    video_url = video['webpage_url']
+                elif 'id' in video:
+                    video_url = f"https://www.youtube.com/watch?v={video['id']}"
+                
+                if not video_url:
+                    st.warning(f"No valid URL found for video {i+1}")
                     continue
+                
+                # Try to download with retry logic
+                for attempt in range(3):
+                    try:
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            video_info = ydl.extract_info(video_url, download=True)
+                            break
+                    except Exception as retry_error:
+                        if attempt == 2:  # Last attempt
+                            raise retry_error
+                        time.sleep(2)  # Wait before retry
+                
+                # Find the downloaded audio file
+                audio_file = None
+                for file in os.listdir(temp_dir):
+                    if file.endswith('.mp3'):
+                        audio_file = os.path.join(temp_dir, file)
+                        break
+                
+                if audio_file:
+                    # Load audio and extract first duration seconds
+                    audio = AudioSegment.from_mp3(audio_file)
+                    
+                    # Extract the specified duration
+                    if len(audio) > duration_seconds * 1000:
+                        clip = audio[:duration_seconds * 1000]
+                    else:
+                        clip = audio
+                    
+                    audio_clips.append(clip)
+                    successful_downloads += 1
+                    
+                    # Remove the temporary file
+                    os.remove(audio_file)
+                
+            except Exception as e:
+                st.warning(f"Could not process video {i+1}: {str(e)}")
+                continue
         
         if not audio_clips:
-            raise Exception("No audio clips could be processed")
+            raise Exception("No audio clips could be processed. Try a different artist or reduce the number of videos.")
         
         return audio_clips, temp_dir
     
