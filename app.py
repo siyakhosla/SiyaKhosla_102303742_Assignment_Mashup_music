@@ -114,6 +114,8 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
                 
                 # Try to download maximum 3 videos
                 max_videos = min(3, num_videos)
+                success_count = 0
+                
                 for i, video in enumerate(videos[:max_videos]):
                     progress = (i + 1) / max_videos
                     progress_bar.progress(progress, f"Processing video {i+1}/{max_videos}")
@@ -150,6 +152,7 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
                                 clip = audio
                             
                             audio_clips.append(clip)
+                            success_count += 1
                             
                             # Remove the temporary file
                             os.remove(audio_file)
@@ -159,6 +162,11 @@ def download_audio_from_youtube(singer_name, num_videos, duration_seconds, progr
                     
                     # Long delay between downloads
                     time.sleep(5)
+                
+                # If no successful downloads, fallback to demo
+                if success_count == 0:
+                    st.warning("YouTube access restricted. Creating demo mashup instead...")
+                    return create_demo_clips(duration_seconds, num_videos, temp_dir)
         
         except Exception as e:
             # If YouTube fails completely, create demo clips
