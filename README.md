@@ -102,6 +102,10 @@ click here: https://siyakhosla102303742assignmentmashupmusic-yr8dzecfqhxv2cugdw3
 - **Duration**: Must be ≥ 20 seconds, maximum 120 seconds
 - **Output File**: Automatically adds .mp3 extension if missing
 
+## WebApp Appearance
+
+![WebApp UI](webapp-ui.png)
+
 ## Error Handling
 
 The application handles common errors gracefully:
