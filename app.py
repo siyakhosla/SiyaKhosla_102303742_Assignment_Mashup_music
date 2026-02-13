@@ -311,7 +311,7 @@ def create_mashup(audio_clips, output_filename):
 
 def main():
     # Header
-    st.markdown('<h1 class="main-header"><strong>YouTube Mashup Generator</strong></h1>', unsafe_allow_html=True)
+    st.markdown('# **YouTube Mashup Generator**', unsafe_allow_html=True)
     st.markdown('<p style="text-align: center; color: #666;">Create amazing audio mashups from YouTube videos</p>', unsafe_allow_html=True)
     
     # Input section
@@ -321,13 +321,13 @@ def main():
     
     with col1:
         singer_name = st.text_input(
-            "<strong>Singer/Artist Name*</strong>",
+            "**Singer/Artist Name***",
             placeholder="e.g., Taylor Swift, Ed Sheeran",
             help="Enter the name of the singer or artist"
         )
         
         num_videos = st.number_input(
-            "<strong>Number of Videos*</strong>",
+            "**Number of Videos***",
             min_value=10,
             max_value=50,
             value=10,
@@ -337,7 +337,7 @@ def main():
     
     with col2:
         duration_seconds = st.number_input(
-            "<strong>Duration per Clip (seconds)*</strong>",
+            "**Duration per Clip (seconds)***",
             min_value=20,
             max_value=120,
             value=30,
@@ -346,7 +346,7 @@ def main():
         )
         
         output_filename = st.text_input(
-            "<strong>Output File Name</strong>",
+            "**Output File Name**",
             value="mashup.mp3",
             help="Name of the final mashup file"
         )
@@ -362,7 +362,7 @@ def main():
         output_filename += '.mp3'
     
     # Generate button
-    if st.button("<strong>Generate Mashup</strong>", key="generate_btn", use_container_width=True):
+    if st.button("**Generate Mashup**", key="generate_btn", use_container_width=True):
         # Create progress container
         progress_container = st.container()
         
@@ -395,7 +395,7 @@ def main():
                 # Provide download button
                 with open(mashup_file, 'rb') as f:
                     st.download_button(
-                        "<strong>Download Mashup</strong>",
+                        "**Download Mashup**",
                         data=f.read(),
                         file_name=output_filename,
                         mime='audio/mpeg',
