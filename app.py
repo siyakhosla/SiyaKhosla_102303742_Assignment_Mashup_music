@@ -24,11 +24,11 @@ st.markdown("""
         margin-bottom: 2rem;
     }
     .input-container {
-        background-color: #f8f9fa;
+        background-color: #e3f2fd;
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
-        border: 1px solid #e9ecef;
+        border: 1px solid #bbdefb;
     }
     .success-message {
         background-color: #d4edda;
@@ -311,7 +311,7 @@ def create_mashup(audio_clips, output_filename):
 
 def main():
     # Header
-    st.markdown('<h1 class="main-header">🎵 YouTube Mashup Generator</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header"><strong>YouTube Mashup Generator</strong></h1>', unsafe_allow_html=True)
     st.markdown('<p style="text-align: center; color: #666;">Create amazing audio mashups from YouTube videos</p>', unsafe_allow_html=True)
     
     # Input section
@@ -321,13 +321,13 @@ def main():
     
     with col1:
         singer_name = st.text_input(
-            "Singer/Artist Name*",
+            "<strong>Singer/Artist Name*</strong>",
             placeholder="e.g., Taylor Swift, Ed Sheeran",
             help="Enter the name of the singer or artist"
         )
         
         num_videos = st.number_input(
-            "Number of Videos*",
+            "<strong>Number of Videos*</strong>",
             min_value=10,
             max_value=50,
             value=10,
@@ -337,7 +337,7 @@ def main():
     
     with col2:
         duration_seconds = st.number_input(
-            "Duration per Clip (seconds)*",
+            "<strong>Duration per Clip (seconds)*</strong>",
             min_value=20,
             max_value=120,
             value=30,
@@ -346,7 +346,7 @@ def main():
         )
         
         output_filename = st.text_input(
-            "Output File Name",
+            "<strong>Output File Name</strong>",
             value="mashup.mp3",
             help="Name of the final mashup file"
         )
@@ -362,7 +362,7 @@ def main():
         output_filename += '.mp3'
     
     # Generate button
-    if st.button("🎵 Generate Mashup", key="generate_btn", use_container_width=True):
+    if st.button("<strong>Generate Mashup</strong>", key="generate_btn", use_container_width=True):
         # Create progress container
         progress_container = st.container()
         
@@ -388,14 +388,14 @@ def main():
                 
                 # Success message
                 st.markdown(
-                    f'<div class="success-message">✅ Successfully created mashup with {len(audio_clips)} audio clips!</div>',
+                    f'<div class="success-message">Successfully created mashup with {len(audio_clips)} audio clips!</div>',
                     unsafe_allow_html=True
                 )
                 
                 # Provide download button
                 with open(mashup_file, 'rb') as f:
                     st.download_button(
-                        label="📥 Download Mashup",
+                        "<strong>Download Mashup</strong>",
                         data=f.read(),
                         file_name=output_filename,
                         mime='audio/mpeg',
